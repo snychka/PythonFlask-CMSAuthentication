@@ -1,8 +1,10 @@
 from functools import wraps 
 from flask import session, g 
+
 from cms.admin import admin_bp
 from cms.admin.models import User
 from flask import render_template, request, redirect, url_for, flash
+
 
 def protected(route_function):
     @wraps(route_function)
@@ -14,7 +16,9 @@ def protected(route_function):
 
 # actually should be @admin_bp.before_app_request
 # test needs to be improved
-@before_app_request
+# @admin_bp.before_app_request
+@admin_bp.before_app_request
+# @before_app_request
 def load_user():
     user_id = session.get('user_id')
     g.user = User.query.get(user_id) if user_id is not None else None

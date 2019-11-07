@@ -83,6 +83,7 @@ def users():
     users = User.query.all()
     return render_template('admin/users.html', title='Users', users=users)
 
+@auth.protected
 @admin_bp.route('/settings')
 def settings():
     settings = Setting.query.all()
