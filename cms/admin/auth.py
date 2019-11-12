@@ -35,7 +35,8 @@ def login():
         check = user.check_password(password)
         if user is None:
             error = 'no user'
-        elif check is None:
+        # elif check is None:
+        elif not check:
             error = 'no password'
         if error is None:
             session.clear()
