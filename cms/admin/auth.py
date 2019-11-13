@@ -32,11 +32,12 @@ def login():
         error = None
         # https://flask-sqlalchemy.palletsprojects.com/en/2.x/queries/#queries-in-views
         user = User.query.filter_by(username=username).first()
-        check = user.check_password(password)
+        # check = user.check_password(password)
         if user is None:
             error = 'no user'
         # elif check is None:
-        elif not check:
+        # elif not check:
+        elif not user.check_password(password):
             error = 'no password'
         if error is None:
             session.clear()
