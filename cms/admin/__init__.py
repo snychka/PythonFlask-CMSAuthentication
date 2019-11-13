@@ -11,9 +11,13 @@ def requested_type(type):
     types = [row.name for row in Type.query.all()]
     return True if type in types else False
 
-@auth.protected
+# can't be here as won't prompt for login if go to /admin
+# @auth.protected
+# works if moved directly above function.
+# may be needed for other functions too
 @admin_bp.route('/', defaults={'type': 'page'})
 @admin_bp.route('/<type>')
+@auth.protected
 def content(type):
     if requested_type(type):
         content = Content.query.join(Type).filter(Type.name == type)
