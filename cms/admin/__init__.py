@@ -4,15 +4,20 @@ from cms.admin.models import Content, Type, User, Setting, db
 from datetime import datetime
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin', template_folder='templates')
-
+from cms.admin import auth
 
 
 def requested_type(type):
     types = [row.name for row in Type.query.all()]
     return True if type in types else False
 
+# can't be here as won't prompt for login if go to /admin
+# @auth.protected
+# works if moved directly above function.
+# may be needed for other functions too
 @admin_bp.route('/', defaults={'type': 'page'})
 @admin_bp.route('/<type>')
+@auth.protected
 def content(type):
     if requested_type(type):
         content = Content.query.join(Type).filter(Type.name == type)
@@ -20,6 +25,7 @@ def content(type):
     else:
         abort(404)
 
+@auth.protected
 @admin_bp.route('/create/<type>', methods=('GET', 'POST'))
 def create(type):
     if requested_type(type):
@@ -48,6 +54,7 @@ def create(type):
     else:
         abort(404)
 
+@auth.protected
 @admin_bp.route('/edit/<id>', methods=('GET', 'POST'))
 def edit(id):
     content = Content.query.get_or_404(id)
@@ -74,11 +81,13 @@ def edit(id):
     types = Type.query.all()
     return render_template('admin/content_form.html', types=types, title='Edit', item_title=content.title, slug=content.slug, type_name=type.name, type_id=content.type_id, body=content.body)
 
+@auth.protected
 @admin_bp.route('/users')
 def users():
     users = User.query.all()
     return render_template('admin/users.html', title='Users', users=users)
 
+@auth.protected
 @admin_bp.route('/settings')
 def settings():
     settings = Setting.query.all()
